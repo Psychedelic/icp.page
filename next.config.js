@@ -1,9 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const withTM = require("next-transpile-modules")(["@dfinity/principal"]);
+module.exports = withTM({
   reactStrictMode: true,
-  transformIgnorePatterns: [
-    'node_modules/(?!(@dfinity/principal)/)' 
-  ],
-}
-
-module.exports = nextConfig
+})
