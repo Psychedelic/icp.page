@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import plugReducer from '@/store/features/plug/plug-slice';
+import recordsReducer from '@/store/features/records/records-slice'
 
 // define view reducers and activity reducers here
 export const store = configureStore({
   reducer: {
     plug: plugReducer,
+    records: recordsReducer
   },
   middleware: (getDefaultMiddleware: any) =>
     getDefaultMiddleware({
