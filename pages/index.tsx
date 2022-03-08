@@ -1,5 +1,5 @@
 import { usePlugStore, useRecordsStore } from '@/store'
-import { shortPrincipal } from '@/utils'
+import { shortPrincipal, socialKeys } from '@/utils'
 import { Avatar, Center, Circle, Flex, Image, Text } from '@chakra-ui/react'
 import { DefaultInfoExt, ICNSResolverController } from 'icns-js'
 import type { NextPage } from 'next'
@@ -26,9 +26,7 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
 const Home: NextPage = () => {
   const { reverseName, principalId } = usePlugStore()
   const [loading, setLoading] = useState(true)
-  const [infos, setInfos] = useState<null | DefaultInfoExt>(null)
-
-  const {domainName, records} = useRecordsStore()
+  const { domainName, records } = useRecordsStore()
 
   const linkBars = useMemo(() => <>{
     records?.textExtensions?.map(
@@ -62,7 +60,7 @@ const Home: NextPage = () => {
         </Text>
         <Text fontSize='14px'
           fontWeight='semibold'>
-          {infos?.description?.[0] ?? 'Description not set'}
+          {records?.description?.[0] ?? 'Description not set'}
         </Text>
       </Flex>
       {linkBars}
@@ -70,22 +68,31 @@ const Home: NextPage = () => {
       <Flex width='100%'
         margin='24px auto'
         justifyContent='center'>
-        <a hidden={!infos?.twitter || infos?.twitter.length < 1}
-          href={infos?.twitter[0]}>
+        {
+          socialKeys.map((item, index) =>
+            <a key={index}
+              hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
+              href={(records as any)?.[item.key][0]}>
+              <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key}/>
+            </a>
+          )
+        }
+        {/* <a hidden={!records?.twitter || records?.twitter.length < 1}
+          href={records?.twitter[0]}>
           <Image src='/twitter.svg' margin='0 8px' cursor='pointer' />
-        </a>
-        {/* <a hidden={!infos? || infos?.twitter.length<1} 
-          href={infos?.twitter[0]}></a>
+        </a> */}
+        {/* <a hidden={!records? || records?.twitter.length<1} 
+          href={records?.twitter[0]}></a>
         <Image src='/ins.svg' margin='0 8px' cursor='pointer' /> */}
         {/* <Image src='/linkedin.svg' margin='0 8px' cursor='pointer' /> */}
-        <a hidden={!infos?.telegram || infos?.telegram.length < 1}
-          href={infos?.telegram[0]}>
+        {/* <a hidden={!records?.telegram || records?.telegram.length < 1}
+          href={records?.telegram[0]}>
           <Image src='/telegram.svg' margin='0 8px' cursor='pointer' />
         </a>
-        <a hidden={!infos?.email || infos?.email.length < 1}
-          href={infos?.email[0]}>
+        <a hidden={!records?.email || records?.email.length < 1}
+          href={records?.email[0]}>
           <Image src='/mail.svg' margin='0 8px' cursor='pointer' />
-        </a>
+        </a> */}
         <Image src='/plus.svg' margin='0 8px' cursor='pointer' />
       </Flex>
     </Flex>

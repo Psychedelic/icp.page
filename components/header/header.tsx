@@ -48,15 +48,12 @@ export const Header = () => {
         alignItems='center'
         justifyContent='flex-end'
       >
-        <Button width='100px'
-          height='36px'
-          borderRadius='18px'
-          border='solid 1px #3366FF'
-          color='regular.light'
+        <Button 
+          variant='outline'
+          colorScheme='regular'
           marginRight='16px'
-          bgColor='white'
           onClick={()=>{
-            router.push(editing ? '/' : '/edit/profile')
+            router.push(editing ? '/' : '/edit')
             setEditing(!editing)
             
           }}> {editing ? 'Close edit': 'Edit'} </Button>

@@ -25,6 +25,8 @@ export const ConnectButton = () => {
     await disconnect()
   };
 
+  usePlugInit()
+
   const isLoading = useMemo(() => {
     return plugState === FeatureState.Loading;
   }, [plugState]);
@@ -57,11 +59,8 @@ export const ConnectButton = () => {
   return <>{isConnected ?
     <Menu>
       <MenuButton
-        bgColor="regular.light"
+        colorScheme='regular'
         width={reverseName ? '160px' : '130px'}
-        height='36px'
-        borderRadius='18px'
-        color='white'
         as={Button}
         // rightIcon={<GoTriangleDown />}
         >
@@ -87,7 +86,7 @@ export const ConnectButton = () => {
     </Menu>
     :
     <Button
-      bgColor={'regular.light'}
+      colorScheme='regular'
       width='130px'
       height='36px'
       borderRadius='18px'

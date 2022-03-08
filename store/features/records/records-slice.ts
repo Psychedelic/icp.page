@@ -30,8 +30,8 @@ export const recordsSlice = createSlice({
   name: 'records',
   initialState,
   reducers: {
-    setRecords: (state, action: PayloadAction<DefaultInfoExt>) => {
-      state.records = { ...action.payload };
+    setRecords: (state, action: PayloadAction<object>) => {
+      state.records = {...state.records, ...action.payload };
     },
     setDomainName: (state, action: PayloadAction<string>)=>{
       state.domainName = action.payload

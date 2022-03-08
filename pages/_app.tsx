@@ -17,6 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     components: {
       Button: {
         baseStyle: {
+          width: '100px',
+          height: '36px',
+          borderRadius: '20px' ,
           _focus: {
             boxShadow: 'none'
           }
@@ -29,8 +32,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     },
     colors: {
       regular: {
-        light: '#3366FF',
-        dark: '#1C4FE8'
+        500: '#3366FF', // solid
+        600: '#1C4FE8', // outline 
       },
       grey: {
         b4: '#E6E6E6',
