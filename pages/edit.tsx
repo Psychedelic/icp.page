@@ -8,7 +8,7 @@ import { useRef, useState } from "react"
 const SocialLinksField = ({ title, value }: { title: string, value?: string }) => {
   const [editing, setEditing] = useState(false)
   const { domainName, records } = useRecordsStore()
-  const [input, setInput] = useState(value??"Not set")
+  const [input, setInput] = useState(value??'')
   const [loading, setLoading] = useState(false)
 
   const toast = useToast()
@@ -61,6 +61,7 @@ const SocialLinksField = ({ title, value }: { title: string, value?: string }) =
         <Input maxWidth='500px'
           // defaultValue={ "Not set"}
           value={input}
+          placeholder={'Put your '+ title +' link here'}
           onChange={(e) => {
             setInput(e.target.value)
           }}
@@ -93,8 +94,8 @@ const SocialLinksField = ({ title, value }: { title: string, value?: string }) =
 export const Edit: NextPage = () => {
 
   const { domainName, records } = useRecordsStore()
-  const [avatarLink, setAvatarLink] = useState('')
-  const [description, setDescription] = useState('')
+  const [avatarLink, setAvatarLink] = useState(records?.avatar?.[0] ?? '')
+  const [description, setDescription] = useState(records?.description?.[0] ?? '')
 
   return <>
     <Flex paddingTop='10vh'
@@ -125,6 +126,7 @@ export const Edit: NextPage = () => {
                 borderRadius='12px'
                 marginBottom='16px'
                 src={avatarLink ? avatarLink : '/Rectangle.jpg'}
+                fallbackSrc='/Rectangle.jpg'
               />
               <Text marginBottom='4px'
                 textColor='regular.light'
@@ -134,7 +136,7 @@ export const Edit: NextPage = () => {
               </Text>
               <Text fontSize='14px'
                 fontWeight='semibold'>
-                {records?.description && (records?.description[0] ?? 'Description not set')}
+                {records?.description && (records?.description?.[0] ?? 'Description not set')}
               </Text>
 
               <Box maxWidth='600px'
@@ -146,8 +148,10 @@ export const Edit: NextPage = () => {
                 <Input width='100%'
                   marginTop='4px'
                   value={avatarLink}
+                  placeholder='Put a image link here'
                   onChange={(e) => {
                     var text = e.target.value
+                    // if (/^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(text))
                     setAvatarLink(text)
                   }} />
               </Box>
@@ -160,7 +164,7 @@ export const Edit: NextPage = () => {
                 <Textarea width='100%'
                   margin='4px 0'
                   value={description}
-                  placeholder={records?.description?.[0] ?? 'Not set'}
+                  placeholder={'Put your description here'}
                   onChange={(e) => {
                     var text = e.target.value
                     setDescription(text)

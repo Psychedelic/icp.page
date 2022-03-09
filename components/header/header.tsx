@@ -15,7 +15,6 @@ export const Header = () => {
   
   const route = useRouter()
   const btnRef: any = useRef()
-  const [editing, setEditing] = useState(false)
   const [mobile, setMobile] = useState(false);
 
   function handleWindowSizeChange() {
@@ -35,6 +34,9 @@ export const Header = () => {
 
   const router = useRouter()
 
+  const editing = useMemo(() =>  
+    router && router.asPath.split('/')[1]?.includes('edit') ? true : false
+  , [router.asPath])
 
   return (
     <Flex position='fixed' zIndex='99'
@@ -54,8 +56,6 @@ export const Header = () => {
           marginRight='16px'
           onClick={()=>{
             router.push(editing ? '/' : '/edit')
-            setEditing(!editing)
-            
           }}> {editing ? 'Close edit': 'Edit'} </Button>
         <ConnectButton />
       </Flex>
