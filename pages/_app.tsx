@@ -32,17 +32,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     },
     colors: {
       regular: {
+        100: '#ECF1FF',
         500: '#3366FF', // solid
         600: '#1C4FE8', // outline 
       },
       grey: {
-        b4: '#E6E6E6',
-        b3: '#C4C4C4',
-        b2: '#666666',
-        b1: '#000000'
-      },
-      sky: {
-        light: '#ECF1FF'
+        400: '#E6E6E6',
+        300: '#C4C4C4',
+        200: '#666666',
+        100: '#000000'
       }
     },
   })
