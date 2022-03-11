@@ -2024,10 +2024,10 @@ hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-
   dependencies:
     react-is "^16.7.0"
 
-icns-js@0.1.6:
-  version "0.1.6"
-  resolved "https://registry.npmmirror.com/icns-js/-/icns-js-0.1.6.tgz#b3767c13da348d68f58f4b60d8e6cbae836f72e9"
-  integrity sha512-sbbEtVio065mPFCd0AHo1hxXxQa/0mOcYkDSfpqd664vbeC3D/jtkqw/eipPv7bkTuytdQYoQmRk9S67Zfzp8g==
+icns-js@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.npmmirror.com/icns-js/-/icns-js-0.1.9.tgz#62e8c1ef3ee1ca262b6e2b630c8b909222f19b4d"
+  integrity sha512-FARZnGkacO6gZ0CMyzS7npSW0deU/LQPywS/jCdgtLmFA8CjE8Vsr+kDNlcJwdm8PErxfCJXjlGlLZsKFr41QQ==
   dependencies:
     "@dfinity/agent" "^0.10.2"
     "@dfinity/candid" "^0.10.2"
@@ -2649,6 +2649,11 @@ react-focus-lock@2.5.2:
     react-clientside-effect "^1.2.5"
     use-callback-ref "^1.2.5"
     use-sidecar "^1.0.5"
+
+react-icons@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.npmmirror.com/react-icons/-/react-icons-4.3.1.tgz#2fa92aebbbc71f43d2db2ed1aed07361124e91ca"
+  integrity sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

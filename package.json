@@ -19,11 +19,12 @@
     "@reduxjs/toolkit": "^1.8.0",
     "add": "^2.0.6",
     "framer-motion": "^6",
-    "icns-js": "0.1.6",
+    "icns-js": "0.1.9",
     "next": "12.1.0",
     "next-transpile-modules": "^9.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-icons": "^4.3.1",
     "react-redux": "^7.2.6",
     "yarn": "^1.22.17"
   },

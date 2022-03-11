@@ -1,14 +1,154 @@
 import { useResolverController } from "@/hooks"
 import { recordsActions, useAppDispatch, useRecordsStore } from "@/store"
 import { socialKeys } from "@/utils"
-import { Flex, Image, Text, Box, Input, Textarea, Tabs, Tab, TabPanels, TabPanel, TabList, Grid, Button, useOutsideClick, Skeleton, useToast } from "@chakra-ui/react"
+import { Flex, Image, Text, Box, Input, Textarea, Tabs, Tab, TabPanels, TabPanel, TabList, Grid, Button, useOutsideClick, Skeleton, useToast, Icon } from "@chakra-ui/react"
 import { NextPage } from "next"
-import { useRef, useState } from "react"
+import { IoTrashSharp } from 'react-icons/io5'
+import { useEffect, useMemo, useRef, useState } from "react"
 
-const SocialLinksField = ({ title, value }: { title: string, value?: string }) => {
+const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew?: boolean }) => {
+
+  const toast = useToast()
+  const ref = useRef()
+
+  const dispatch = useAppDispatch()
+  const resolverController = useResolverController()
+  const { domainName, records } = useRecordsStore()
+
+  const [editing, setEditing] = useState(false)
+  useOutsideClick({
+    ref: ref as any,
+    handler: () => setEditing(false)
+  })
+  const [loading, setLoading] = useState(false)
+
+  const [title, setTitle] = useState(records?.textExtensions?.[index]?.[0] ?? '')
+  const [url, setUrl] = useState(records?.textExtensions?.[index]?.[1] ?? '')
+
+  const handleDelete = () => {
+    setLoading(true)
+    // using title as usingTitle
+    resolverController.setText(domainName + '.icp', title, '').then(() => {
+      let extension = [...records.textExtensions]
+      extension.splice(index, 1)
+      dispatch(recordsActions.setRecords({ textExtensions: extension }))
+      toast({
+        title: 'Success!',
+        status: 'success',
+        description: 'Delete link successfully',
+        duration: 5000,
+        isClosable: true,
+      })
+      setEditing(false)
+    }).catch((error) => {
+      toast({
+        title: 'Failed',
+        status: 'error',
+        description: 'Fail to delete link: ' + error,
+        duration: 5000,
+        isClosable: true,
+      })
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+
+  const handleSave = () => {
+    setLoading(true)
+    let usingTitle = asNew ? '#link#' + title : title
+    resolverController.setText(domainName + '.icp', usingTitle, url).then(() => {
+      if (asNew) // no index
+        dispatch(recordsActions.setRecords({ 'textExtensions': [...records.textExtensions, [usingTitle, url]] })) // new field
+      else { // with index
+        let extension = [...records.textExtensions].slice()
+        extension[index] = [title, url] // set this
+        dispatch(recordsActions.setRecords({ 'textExtensions': extension }))
+        console.log('finished')
+      }
+      toast({
+        title: 'Success!',
+        status: 'success',
+        description: 'Set link successfully',
+        duration: 5000,
+        isClosable: true,
+      })
+      setEditing(false)
+      console.log(records)
+    }).catch((error) => {
+      toast({
+        title: 'Failed',
+        status: 'error',
+        description: 'Fail to set link: ' + error,
+        duration: 5000,
+        isClosable: true,
+      })
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+
+  return <Box ref={ref as any}
+    margin='8px 0'
+    onFocusCapture={() => {
+      setEditing(true)
+    }}>
+    <Grid gridTemplateColumns='230px 370px'
+      gridColumnGap='16px'>
+      <Input
+        disabled={!asNew || loading}
+        value={title.split('#link#')?.[1]}
+        onChange={(e) => {
+          setTitle(e.target.value)
+        }}
+      />
+      <Input
+        value={url}
+        disabled={loading}
+        onChange={(e) => {
+          setUrl(e.target.value)
+        }}
+      />
+    </Grid>
+    <Flex
+      width='100%'
+      hidden={!editing}
+      justifyContent='space-between'
+      alignItems='center'
+      margin='8px 0'>
+      <Icon as={IoTrashSharp}
+        boxSize="24px"
+        color="grey.300"
+        cursor='pointer'
+        onClick={() => {
+          if (!asNew && !loading)
+            handleDelete()
+        }} />
+      <Box>
+        <Button colorScheme='regular'
+          isLoading={loading}
+          disabled={loading}
+          marginRight='8px'
+          variant='outline'
+          onClick={() => {
+            setEditing(false)
+          }}>Cancel</Button>
+        <Button colorScheme='regular'
+          variant='solid'
+          isLoading={loading}
+          disabled={loading}
+          onClick={() => {
+            handleSave()
+          }} >Save</Button>
+      </Box>
+    </Flex>
+  </Box>
+}
+
+const SocialLinksField = ({ title, value }:
+  { title: string, value?: string }) => {
   const [editing, setEditing] = useState(false)
   const { domainName, records } = useRecordsStore()
-  const [input, setInput] = useState(value??"Not set")
+  const [input, setInput] = useState(value ?? '')
   const [loading, setLoading] = useState(false)
 
   const toast = useToast()
@@ -45,7 +185,7 @@ const SocialLinksField = ({ title, value }: { title: string, value?: string }) =
           duration: 5000,
           isClosable: true,
         })
-      }).finally(()=>{
+      }).finally(() => {
         setLoading(false)
       })
     }
@@ -61,6 +201,7 @@ const SocialLinksField = ({ title, value }: { title: string, value?: string }) =
         <Input maxWidth='500px'
           // defaultValue={ "Not set"}
           value={input}
+          placeholder={'Put your ' + title + ' link here'}
           onChange={(e) => {
             setInput(e.target.value)
           }}
@@ -74,27 +215,129 @@ const SocialLinksField = ({ title, value }: { title: string, value?: string }) =
       hidden={!editing}
       justifyContent='flex-end'
       margin='15px 0'>
-      <Button colorScheme='regular'
-        isLoading={loading}
-        disabled={loading}
-        marginRight='8px'
-        variant='outline' onClick={() => { setEditing(false) }}>Cancel</Button>
-      <Button colorScheme='regular'
-        variant='solid'
-        isLoading={loading}
-        disabled={loading}
-        onClick={() => {
-          handleSave()
-        }} >Save</Button>
+      <Box>
+        <Button colorScheme='regular'
+          isLoading={loading}
+          disabled={loading}
+          marginRight='8px'
+          variant='outline' onClick={() => { setEditing(false) }}>
+          Cancel
+        </Button>
+        <Button colorScheme='regular'
+          variant='solid'
+          isLoading={loading}
+          disabled={loading}
+          onClick={() => {
+            handleSave()
+          }} >Save</Button>
+      </Box>
     </Flex>
   </Box>
 }
 
+
+
 export const Edit: NextPage = () => {
 
   const { domainName, records } = useRecordsStore()
-  const [avatarLink, setAvatarLink] = useState('')
-  const [description, setDescription] = useState('')
+  const [avatarLink, setAvatarLink] = useState(records?.avatar?.[0] ?? '')
+  const [description, setDescription] = useState(records?.description?.[0] ?? '')
+  const [avatarAvail, setAvataAvail] = useState(false)
+  const [editAvatar, setEditAvatar] = useState(false)
+  const [editDesc, setEditDesc] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const refAvatar = useRef()
+  const refDesc = useRef()
+
+  const resolverController = useResolverController()
+  const dispatch = useAppDispatch()
+
+  const toast = useToast()
+
+  useOutsideClick({
+    ref: refDesc as any,
+    handler: () => setEditDesc(false)
+  })
+
+  useOutsideClick({
+    ref: refAvatar as any,
+    handler: () => setEditAvatar(false)
+  })
+
+  useEffect(() => {
+    setAvatarLink(records?.avatar?.[0]! ?? '')
+    setDescription(records?.description?.[0]! ?? '')
+  }, [records])
+
+  const linkList = useMemo(() => {
+    return <>
+      {
+        records?.textExtensions?.map((item, index) => {
+          if (/^#link#/.test(item[0]))
+            return <CustomLinksField index={index} />
+        })
+      }
+      {
+        records?.textExtensions?.length < 10 &&
+        <CustomLinksField asNew={true} />
+      }
+    </>
+  }, [records])
+
+  const handleSaveAvatar = () => {
+    setLoading(true)
+    if (resolverController) {
+      resolverController.setText(domainName, 'avatar', avatarLink).then(() => {
+        dispatch(recordsActions.setRecords({ avatar: [avatarLink] }))
+        toast({
+          title: 'Success!',
+          status: 'success',
+          description: 'Update avatar link successfully',
+          duration: 5000,
+          isClosable: true,
+        })
+        setEditAvatar(false)
+      }).catch((error) => {
+        toast({
+          title: 'Failed',
+          status: 'error',
+          description: 'Fail to update avatar link: ' + error,
+          duration: 5000,
+          isClosable: true,
+        })
+      }).finally(() => {
+        setLoading(false)
+      })
+    }
+  }
+
+  const handleSaveDesc = () => {
+    setLoading(true)
+    if (resolverController) {
+      resolverController.setText(domainName, 'description', description).then(() => {
+        dispatch(recordsActions.setRecords({ description: [description] }))
+        toast({
+          title: 'Success!',
+          status: 'success',
+          description: 'Delete description successfully',
+          duration: 5000,
+          isClosable: true,
+        })
+        setEditAvatar(false)
+      }).catch((error) => {
+        toast({
+          title: 'Failed',
+          status: 'error',
+          description: 'Fail to delete description: ' + error,
+          duration: 5000,
+          isClosable: true,
+        })
+      }).finally(() => {
+        setLoading(false)
+      })
+    }
+  }
 
   return <>
     <Flex paddingTop='10vh'
@@ -124,7 +367,16 @@ export const Edit: NextPage = () => {
                 boxShadow='0 0 10px rgba(0, 0, 0, 0.1)'
                 borderRadius='12px'
                 marginBottom='16px'
-                src={avatarLink ? avatarLink : '/Rectangle.jpg'}
+                src={avatarLink}
+                fit='cover'
+                fallbackSrc='/Rectangle.jpg'
+                onLoad={()=>{
+                  setLoading(false)
+                  setAvataAvail(true)
+                }}
+                onError={()=>{
+                  setAvataAvail(false)
+                }}
               />
               <Text marginBottom='4px'
                 textColor='regular.light'
@@ -134,41 +386,112 @@ export const Edit: NextPage = () => {
               </Text>
               <Text fontSize='14px'
                 fontWeight='semibold'>
-                {records?.description && (records?.description[0] ?? 'Description not set')}
+                {records?.description && (records?.description?.[0] ?? 'Description not set')}
               </Text>
-
-              <Box maxWidth='600px'
-                margin='20px 0'
+              <Box ref={refAvatar as any}
+                maxWidth='600px'
+                marginBottom='12px'
                 width='100%'>
-                <Text fontWeight='bold' fontSize='14px'>
-                  Avatar Link
-                </Text>
-                <Input width='100%'
-                  marginTop='4px'
-                  value={avatarLink}
-                  onChange={(e) => {
-                    var text = e.target.value
-                    setAvatarLink(text)
-                  }} />
+                <Box margin='20px 0 8px 0'>
+                  <Text fontWeight='bold' fontSize='14px'>
+                    Avatar Link
+                  </Text>
+                  <Input width='100%'
+                    marginTop='4px'
+                    value={avatarLink}
+                    placeholder='Put a image link here'
+                    onFocusCapture={() => {
+                      setEditAvatar(true)
+                    }}
+                    onChange={(e) => {
+                      var text = e.target.value
+                      setLoading(true)
+                      setAvataAvail(false)
+                      // if (/^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(text))
+                      setAvatarLink(text)
+                    }} />
+                </Box>
+                <Flex width='100%'
+                  hidden={!editAvatar}
+                  justifyContent='flex-end'>
+                  <Button colorScheme='regular'
+                    isLoading={loading}
+                    disabled={loading}
+                    marginRight='8px'
+                    variant='outline'
+                    onClick={() => {
+                      setAvatarLink(records?.avatar?.[0]!)
+                      setEditAvatar(false)
+                    }}>Cancel</Button>
+                  <Button colorScheme='regular'
+                    variant='solid'
+                    isLoading={loading}
+                    disabled={loading||!avatarAvail}
+                    onClick={() => {
+                      handleSaveAvatar()
+                    }} >Save</Button>
+                </Flex>
               </Box>
               <Box maxWidth='600px'
                 marginBottom='20px'
                 width='100%'>
                 <Text fontWeight='bold' fontSize='14px'>
-                  Description
+                  Profile Title
                 </Text>
-                <Textarea width='100%'
-                  margin='4px 0'
-                  value={description}
-                  placeholder={records?.description?.[0] ?? 'Not set'}
-                  onChange={(e) => {
-                    var text = e.target.value
-                    setDescription(text)
-                  }} />
-                <Text color='grey.b3'> {description.length} / 500 </Text>
+                <Button width='fit-content'
+                  marginTop='4px'
+                  borderRadius='8px'
+                  color='regular.500'
+                  bgColor='regular.100' >
+                  {domainName}.icp
+                </Button>
+              </Box>
+              <Box maxWidth='600px'
+                width='100%'
+                ref={refDesc as any}>
+                <Box marginBottom='8px'>
+                  <Text fontWeight='bold' fontSize='14px'>
+                    Description
+                  </Text>
+                  <Textarea width='100%'
+                    margin='4px 0'
+                    onFocusCapture={() => {
+                      setEditDesc(true)
+                    }}
+                    value={description}
+                    placeholder={'Put your description here'}
+                    onChange={(e) => {
+                      var text = e.target.value
+                      setDescription(text)
+                    }} />
+                </Box>
+                <Flex width='100%'
+                  hidden={!editDesc}
+                  justifyContent='space-between'>
+                  <Text color='grey.300'> {description.length} / 500 </Text>
+                  <Box>
+                    <Button colorScheme='regular'
+                      isLoading={loading}
+                      disabled={loading}
+                      marginRight='8px'
+                      variant='outline'
+                      onClick={() => {
+                        setDescription(records?.description?.[0]!)
+                        setEditDesc(false)
+                      }}>Cancel</Button>
+                    <Button colorScheme='regular'
+                      variant='solid'
+                      isLoading={loading}
+                      disabled={loading}
+                      onClick={() => {
+                        handleSaveDesc()
+                      }} >Save</Button>
+                  </Box>
+                </Flex>
               </Box>
             </Flex>
           </TabPanel>
+
           <TabPanel>
             <Flex width='100%'
               flexDirection='column'
@@ -180,30 +503,12 @@ export const Edit: NextPage = () => {
                 Customized Links
               </Text>
               <Grid gridTemplateColumns='236px 320px'
-                border='solid 1px #E6E6E6'
                 borderRadius='12px'
-                padding='16px'
-                gridColumnGap='16px'
-                gridRowGap='12px'  >
+                gridColumnGap='16px'>
                 <Text fontSize='16px' fontWeight='semibold'>Title</Text>
                 <Text fontSize='16px' fontWeight='semibold'>Url</Text>
-                <Input />
-                <Input />
-                <Text color='grey.b3' >Caption</Text>
               </Grid>
-              <Grid gridTemplateColumns='236px 320px'
-                marginTop='16px'
-                border='solid 1px #E6E6E6'
-                borderRadius='12px'
-                padding='16px'
-                gridColumnGap='16px'
-                gridRowGap='12px'  >
-                <Text fontSize='16px' fontWeight='semibold'>Title</Text>
-                <Text fontSize='16px' fontWeight='semibold'>Url</Text>
-                <Input />
-                <Input />
-                <Text color='grey.b3' >Caption</Text>
-              </Grid>
+              {linkList}
             </Flex>
             <Flex width='100%'
               flexDirection='column'
@@ -220,19 +525,18 @@ export const Edit: NextPage = () => {
                 {
                   socialKeys.map((item, index) =>
                     <a key={index}
-                      hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1 } 
+                      hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
                       href={(records as any)?.[item.key][0]}>
-                      <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key}/>
+                      <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key} />
                     </a>
                   )
                 }
               </Flex>
               {
                 socialKeys.map((item, index) =>
-                  <SocialLinksField key={index} title={item.key} value={(records as any)?.[item.key][0]}/>
+                  <SocialLinksField key={index} title={item.key} value={(records as any)?.[item.key][0]} />
                 )
               }
-
             </Flex>
           </TabPanel>
         </TabPanels>
