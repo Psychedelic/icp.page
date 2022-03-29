@@ -26,6 +26,8 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
   const [title, setTitle] = useState(records?.textExtensions?.[index]?.[0] ?? '')
   const [url, setUrl] = useState(records?.textExtensions?.[index]?.[1] ?? '')
 
+  const [valid, setValid] = useState(true)
+
   useEffect(() => {
     if (asNew) {
       setTitle('')
@@ -37,6 +39,20 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
     }
   }, [records])
 
+  useEffect(() => {
+    if(url){
+      let tmp;
+      try {
+        tmp = new URL(url);
+        setValid(true);
+      } catch (_) {
+        setValid(false);
+      }
+    } else {
+      setValid(true);
+    }
+  }, [url])
+
   const handleDelete = () => {
     setLoading(true)
     // using title as usingTitle
@@ -45,7 +61,6 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
         let extension = [...records.textExtensions]
         // console.log(title)
         // console.log(extension.filter((value) => value[0] !== title))
-
         dispatch(recordsActions.setRecords({ textExtensions: extension.filter((value) => value[0] !== title) }))
         toast({
           title: 'Success!',
@@ -121,6 +136,7 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
       />
       <Input
         value={url}
+        isInvalid={!valid}
         disabled={loading}
         onChange={(e) => {
           setUrl(e.target.value)
@@ -148,12 +164,13 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
           marginRight='8px'
           variant='outline'
           onClick={() => {
+            setUrl(records?.textExtensions?.[index]?.[1] ?? '')
             setEditing(false)
           }}>Cancel</Button>
         <Button colorScheme='regular'
           variant='solid'
           isLoading={loading}
-          disabled={loading}
+          disabled={loading || !valid}
           onClick={() => {
             handleSave()
           }} >Save</Button>
@@ -256,8 +273,6 @@ const SocialLinksField = ({ title, value }:
   </Box>
 }
 
-
-
 export const Edit: NextPage = () => {
 
   const { domainName, records } = useRecordsStore()
@@ -352,7 +367,7 @@ export const Edit: NextPage = () => {
         toast({
           title: 'Success!',
           status: 'success',
-          description: 'Delete description successfully',
+          description: 'Set description successfully',
           duration: 5000,
           isClosable: true,
         })
@@ -361,7 +376,7 @@ export const Edit: NextPage = () => {
         toast({
           title: 'Failed',
           status: 'error',
-          description: 'Fail to delete description: ' + error,
+          description: 'Fail to set description: ' + error,
           duration: 5000,
           isClosable: true,
         })
@@ -581,7 +596,11 @@ export const Edit: NextPage = () => {
                       socialKeys.map((item, index) =>
                         <a key={index}
                           hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
-                          href={(records as any)?.[item.key][0]}>
+                          href={item.key !== 'email' ?
+                            (records as any)?.[item.key][0]
+                            :
+                            'mailto:' + (records as any)?.[item.key][0]
+                          }>
                           <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key} />
                         </a>
                       )

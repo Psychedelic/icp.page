@@ -90,18 +90,22 @@ const Home: NextPage = () => {
           socialKeys.map((item, index) =>
             <a key={index}
               hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
-              href={(records as any)?.[item.key][0]}>
+              href={item.key !== 'email' ?
+                (records as any)?.[item.key][0]
+                :
+                'mailto:' + (records as any)?.[item.key][0]
+              }>
               <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key} />
             </a>
           )
         }
-        <Image hidden={domainName + '.icp' !== reverseName}
+        {/* <Image hidden={domainName + '.icp' !== reverseName}
           src='/plus.svg'
           margin='0 8px'
           cursor='pointer'
           onClick={() => {
             router.push('/edit')
-          }} />
+          }} /> */}
       </Flex>
     </Flex>
     <Image margin='0 auto' src='/icp-page.svg' />
