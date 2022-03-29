@@ -7,14 +7,15 @@ import { Box, Button, Drawer, DrawerBody, Spinner, DrawerContent, DrawerFooter, 
 import { ExternalLinkIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "../connect";
 import { useRecordsInit } from "@/integrations/records";
+import { usePlugStore, useRecordsStore } from "@/store";
 
 
 export const Header = () => {
 
   useRecordsInit()
-  
-  const route = useRouter()
-  const btnRef: any = useRef()
+  const { reverseName } = usePlugStore()
+  const { domainName } = useRecordsStore()
+
   const [mobile, setMobile] = useState(false);
 
   function handleWindowSizeChange() {
@@ -34,9 +35,10 @@ export const Header = () => {
 
   const router = useRouter()
 
-  const editing = useMemo(() =>  
-    router && router.asPath.split('/')[1]?.includes('edit') ? true : false
-  , [router.asPath])
+  const editing = useMemo(() =>
+    router && router.asPath.split('/')[1]?.includes('edit') ?
+      true : false
+    , [router.asPath])
 
   return (
     <Flex position='fixed' zIndex='99'
@@ -50,13 +52,14 @@ export const Header = () => {
         alignItems='center'
         justifyContent='flex-end'
       >
-        <Button 
+        <Button
           variant='outline'
+          disabled={reverseName !== domainName + '.icp'}
           colorScheme='regular'
           marginRight='16px'
-          onClick={()=>{
+          onClick={() => {
             router.push(editing ? '/' : '/edit')
-          }}> {editing ? 'Close edit': 'Edit'} </Button>
+          }}> {editing ? 'Close edit' : 'Edit'} </Button>
         <ConnectButton />
       </Flex>
     </Flex>

@@ -14,7 +14,7 @@ export const useResolverController = () => {
       createResolverActor({actorAdapter}).then((actor) => {
         const _controller = new ICNSResolverController(actor);
         setController(_controller)
-        console.log('set new controller')
+        // console.log('set new controller')
       })
     }
   }, [ICNSResolverController, principalId])
