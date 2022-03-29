@@ -1,6 +1,6 @@
 import { usePlugStore, useRecordsStore } from '@/store'
 import { shortPrincipal, socialKeys } from '@/utils'
-import { Avatar, Center, Circle, Flex, Image, Text } from '@chakra-ui/react'
+import { Avatar, Center, Circle, Flex, Image, Skeleton, Text } from '@chakra-ui/react'
 import { DefaultInfoExt, ICNSResolverController } from 'icns-js'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -24,16 +24,31 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
 }
 
 const Home: NextPage = () => {
-  const { reverseName, principalId } = usePlugStore()
+  const { reverseName } = usePlugStore()
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
   const { domainName, records } = useRecordsStore()
 
-  const linkBars = useMemo(() => <>{
-    records?.textExtensions?.map(
-      ([title, link], index) =>
-        <LinkBar key={index} title={title} link={link} />
-    )
-  }</>, [records])
+  const linkBars = useMemo(() => {
+    if (typeof records == 'undefined') {
+      setLoading(true)
+    } else if (records.textExtensions.length <= 0) {
+      setLoading(false)
+      return <Text fontSize='2xl'> No links</Text>
+    } else {
+      setLoading(false)
+      return <>{
+        records?.textExtensions?.map(
+          ([title, link], index) => {
+            if (/^#link#/.test(title))
+              return <LinkBar key={index}
+                title={title.split('#link#')[1]}
+                link={link} />
+          }
+        )
+      }</>
+    }
+  }, [records])
 
   return (<>
     <Flex paddingTop='10vh'
@@ -45,26 +60,30 @@ const Home: NextPage = () => {
       <Flex flexDirection='column'
         alignItems='center'
         marginBottom='48px'>
-        <Image bgColor='white'
-          boxSize='80px'
-          boxShadow='0 0 10px rgba(0, 0, 0, 0.1)'
-          borderRadius='12px'
-          marginBottom='16px'
-          src='/Rectangle.jpg'
-        />
-        <Text marginBottom='4px'
-          textColor='regular.light'
-          fontWeight='bold'
-          fontSize='16px'>
-          {domainName}.icp
-        </Text>
+        <Skeleton isLoaded={!loading}>
+          <Image bgColor='white'
+            boxSize='80px'
+            boxShadow='0 0 10px rgba(0, 0, 0, 0.1)'
+            borderRadius='12px'
+            marginBottom='16px'
+            src={records?.avatar?.[0]}
+            fallbackSrc='/Rectangle.jpg'
+          />
+        </Skeleton>
+        <Skeleton isLoaded={!loading}>
+          <Text marginBottom='4px'
+            textColor='regular.light'
+            fontWeight='bold'
+            fontSize='16px'>
+            {domainName}.icp
+          </Text>
+        </Skeleton>
         <Text fontSize='14px'
           fontWeight='semibold'>
           {records?.description?.[0] ?? 'Description not set'}
         </Text>
       </Flex>
       {linkBars}
-      <LinkBar key={2} title='title' link='linklinklnk' />
       <Flex width='100%'
         margin='24px auto'
         justifyContent='center'>
@@ -73,27 +92,17 @@ const Home: NextPage = () => {
             <a key={index}
               hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
               href={(records as any)?.[item.key][0]}>
-              <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key}/>
+              <Image src={item.icon} boxSize='32px' margin='0 8px' cursor='pointer' alt={item.key} />
             </a>
           )
         }
-        {/* <a hidden={!records?.twitter || records?.twitter.length < 1}
-          href={records?.twitter[0]}>
-          <Image src='/twitter.svg' margin='0 8px' cursor='pointer' />
-        </a> */}
-        {/* <a hidden={!records? || records?.twitter.length<1} 
-          href={records?.twitter[0]}></a>
-        <Image src='/ins.svg' margin='0 8px' cursor='pointer' /> */}
-        {/* <Image src='/linkedin.svg' margin='0 8px' cursor='pointer' /> */}
-        {/* <a hidden={!records?.telegram || records?.telegram.length < 1}
-          href={records?.telegram[0]}>
-          <Image src='/telegram.svg' margin='0 8px' cursor='pointer' />
-        </a>
-        <a hidden={!records?.email || records?.email.length < 1}
-          href={records?.email[0]}>
-          <Image src='/mail.svg' margin='0 8px' cursor='pointer' />
-        </a> */}
-        <Image src='/plus.svg' margin='0 8px' cursor='pointer' />
+        <Image hidden={domainName + '.icp' !== reverseName}
+          src='/plus.svg'
+          margin='0 8px'
+          cursor='pointer'
+          onClick={() => {
+            router.push('/edit')
+          }} />
       </Flex>
     </Flex>
     <Image margin='0 auto' src='/icp-page.svg' />
