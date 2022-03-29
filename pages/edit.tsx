@@ -40,7 +40,7 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
   }, [records])
 
   useEffect(() => {
-    if(url){
+    if (url) {
       let tmp;
       try {
         tmp = new URL(url);
@@ -275,8 +275,8 @@ const SocialLinksField = ({ title, value }:
 
 export const Edit: NextPage = () => {
 
-  const { domainName, records } = useRecordsStore()
-  const { reverseName } = usePlugStore()
+  const { domainName, records, editor } = useRecordsStore()
+  const { reverseName, principalId } = usePlugStore()
   const [avatarLink, setAvatarLink] = useState(records?.avatar?.[0] ?? '')
   const [description, setDescription] = useState(records?.description?.[0] ?? '')
   const [avatarAvail, setAvataAvail] = useState(false)
@@ -309,7 +309,7 @@ export const Edit: NextPage = () => {
     if (!records) {
       setLoading(true)
     } else {
-      false
+      setLoading(false)
     }
 
     // every time update content, reinit all fields
@@ -388,18 +388,26 @@ export const Edit: NextPage = () => {
 
   return <>
     {
-      reverseName !== domainName + '.icp' ?
+      !principalId || !editor.includes(principalId as string) ?
         <>
           <Flex paddingTop='10vh'
             maxWidth='635px'
             alignItems='center'
+            flexDirection='column'
             justifyContent='center'
             minHeight='90vh'
             margin='0 auto'>
+
             <Skeleton isLoaded={!loading}>
-              <Text fontSize='3xl'>Not Accessable!</Text>
+              <Text fontSize='3xl'>
+                {principalId ?
+                  'Not Accessable!'
+                  :
+                  'Plug Not connected'}
+              </Text>
               <br />
               <Button width='fit-content'
+                float='right'
                 colorScheme='regular'
                 onClick={() => {
                   router.push('/')
