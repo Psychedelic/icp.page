@@ -1,7 +1,6 @@
 import { usePlugStore, useRecordsStore } from '@/store'
-import { shortPrincipal, socialKeys } from '@/utils'
+import { socialKeys } from '@/utils'
 import { Avatar, Center, Circle, Flex, Image, Skeleton, Text } from '@chakra-ui/react'
-import { DefaultInfoExt, ICNSResolverController } from 'icns-js'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
