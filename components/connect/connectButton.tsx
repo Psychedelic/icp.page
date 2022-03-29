@@ -39,10 +39,15 @@ export const ConnectButton = () => {
     }
 
     try {
+      
       dispatch(plugActions.setState(FeatureState.Loading));
 
       const isConnected = await requestConnect({
-        whitelist: Object.values(ICNSConstants.canisterIds),
+        whitelist: [
+          ICNSConstants.canisterIds.resolver,
+          ICNSConstants.canisterIds.registry,
+          ICNSConstants.canisterIds.reverse_registrar
+        ],
         host: ICNSConstants.host,
       });
 

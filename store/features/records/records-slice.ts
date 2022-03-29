@@ -1,10 +1,15 @@
 import { RootState } from "@/store/store";
+import { Principal } from "@dfinity/principal";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DefaultInfoExt } from "icns-js";
 
 // use defualt ext interface
-const initialState: {domainName: string, records: DefaultInfoExt} = {
+const initialState: {domainName: string, 
+  editor:Array<string>, 
+  records: DefaultInfoExt
+} = {
   domainName: '',
+  editor: [],
   records: {
     'btc': [],
     'eth': [],
@@ -33,8 +38,11 @@ export const recordsSlice = createSlice({
     setRecords: (state, action: PayloadAction<object>) => {
       state.records = {...state.records, ...action.payload };
     },
+    setEditor: (state, action: PayloadAction<Array<string>>) => {
+      state.editor = action.payload;
+    },
     setDomainName: (state, action: PayloadAction<string>)=>{
-      state.domainName = action.payload
+      state.domainName = action.payload;
     }
   }
 })

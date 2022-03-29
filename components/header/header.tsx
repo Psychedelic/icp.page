@@ -1,6 +1,5 @@
 import { Router, useRouter } from "next/router"
 import Link from "next/link"
-import { shortPrincipal } from "@/utils";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { usePlugInit } from '@/integrations/plug';
 import { Box, Button, Drawer, DrawerBody, Spinner, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, Img, Menu, MenuButton, MenuItem, MenuList, useDisclosure, useToast } from "@chakra-ui/react";
@@ -8,13 +7,14 @@ import { ExternalLinkIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "../connect";
 import { useRecordsInit } from "@/integrations/records";
 import { usePlugStore, useRecordsStore } from "@/store";
+import { Principal } from "@dfinity/principal";
 
 
 export const Header = () => {
 
   useRecordsInit()
-  const { reverseName } = usePlugStore()
-  const { domainName } = useRecordsStore()
+  const { reverseName, principalId } = usePlugStore()
+  const { domainName, editor } = useRecordsStore()
 
   const [mobile, setMobile] = useState(false);
 
@@ -39,7 +39,6 @@ export const Header = () => {
     router && router.asPath.split('/')[1]?.includes('edit') ?
       true : false
     , [router.asPath])
-
   return (
     <Flex position='fixed' zIndex='99'
       height='50px'
@@ -54,7 +53,7 @@ export const Header = () => {
       >
         <Button
           variant='outline'
-          disabled={reverseName !== domainName + '.icp'}
+          hidden={ !principalId || !editor.includes(principalId as string)}
           colorScheme='regular'
           marginRight='16px'
           onClick={() => {
