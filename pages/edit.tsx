@@ -247,7 +247,7 @@ const SocialLinksField = ({ title, value }:
       <Text fontWeight='bold'>
         {title[0].toUpperCase() + title.slice(1)}
       </Text>
-      <Skeleton flexGrow='1' maxWidth='500px' isLoaded={!loading} >
+      <Skeleton flexGrow={1} maxWidth='500px' isLoaded={!loading} >
         <Input maxWidth='500px'
           // defaultValue={ "Not set"}
           value={input}
