@@ -40,12 +40,12 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
   }, [records])
 
   function validURL(str: string) {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
   }
 
@@ -53,9 +53,9 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
     if (url) {
       let tmp;
       try {
-        if(validURL(url))
+        if (validURL(url))
           setValid(true);
-        else 
+        else
           setValid(false);
       } catch (_) {
         setValid(false);
@@ -616,8 +616,13 @@ export const Edit: NextPage = () => {
                       socialKeys.map((item, index) =>
                         <a key={index}
                           hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
+                          target="_blank"
                           href={item.key !== 'email' ?
-                            (records as any)?.[item.key][0]
+                            (
+                              (records as any)?.[item.key][0].startsWith('http') ?
+                                (records as any)?.[item.key][0] :
+                                '//' + (records as any)?.[item.key][0]
+                            )
                             :
                             'mailto:' + (records as any)?.[item.key][0]
                           }>

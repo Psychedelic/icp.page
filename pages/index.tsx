@@ -13,7 +13,7 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
-    }} href={'//' + link}>
+    }} target="_blank" href={link.startsWith('http') ? link : '//' + link}>
       <Center width='90%'
         height='calc(20px + 3vh)'
         fontSize='16px'
