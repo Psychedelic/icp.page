@@ -1,5 +1,5 @@
 import { usePlugStore, useRecordsStore } from '@/store'
-import { socialKeys } from '@/utils'
+import { domainStatus, socialKeys } from '@/utils'
 import { Avatar, Center, Circle, Flex, Image, Skeleton, Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -22,18 +22,25 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
   )
 }
 
+
 const Home: NextPage = () => {
   const { reverseName } = usePlugStore()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const { domainName, records } = useRecordsStore()
+  const { domainName, editor, records, status } = useRecordsStore()
 
+  /**
+   * status:
+   * using links.
+   * claimed but no link. 
+   * unclaimed.
+   * unknown(just loading)
+   */
   const linkBars = useMemo(() => {
-    if (typeof records == 'undefined') {
-      setLoading(true)
-    } else if (records.textExtensions.length <= 0) {
-      setLoading(false)
-      return <Text fontSize='2xl'> No links</Text>
+    if (records.textExtensions.length <= 0) {
+      return <Skeleton isLoaded={!loading}>
+        <Text fontSize='2xl'> No links</Text>
+      </Skeleton>
     } else {
       setLoading(false)
       return <>{
@@ -47,7 +54,15 @@ const Home: NextPage = () => {
         )
       }</>
     }
-  }, [records])
+  }, [records, loading])
+
+  useEffect(()=>{
+    if (status === domainStatus.loaded) {
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+  }, [status])
 
   return (<>
     <Flex paddingTop='10vh'
@@ -79,7 +94,9 @@ const Home: NextPage = () => {
         </Skeleton>
         <Text fontSize='14px'
           fontWeight='semibold'>
-          {records?.description?.[0] ?? 'Description not set'}
+          {records?.description?.[0] ?? <Skeleton isLoaded={!loading}>
+            'Description not set'
+          </Skeleton>}
         </Text>
       </Flex>
       {linkBars}

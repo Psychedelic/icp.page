@@ -1,4 +1,5 @@
 import { useRecordsStore, recordsActions, useAppDispatch } from "@/store"
+import { domainStatus } from "@/utils"
 import { ICNSRegistryController, ICNSResolverController } from "icns-js"
 import { useEffect } from "react"
 
@@ -16,15 +17,20 @@ export const useRecordsInit = () => {
   useEffect(() => {
     if (!domainName) return
     // get editor name 
-    registryActor.getRecord(domainName).then((res)=>{
-      if(res){
-        dispatch(recordsActions.setEditor([res.controller.toString(), res.owner.toString()]))
+    registryActor.getRecord(domainName).then((res) => {
+      if (res) {
+        dispatch(recordsActions.setEditor([res.controller.toString(),
+        res.owner.toString()]))
       }
     })
 
     // get text info
-    resolverActor.getUserDefaultInfo(domainName + '.icp').then(() => {
-      resolverActor.DefaultInfo && dispatch(recordsActions.setRecords(resolverActor.DefaultInfo))
+    resolverActor.getUserDefaultInfo(domainName + '.icp').then((res) => {
+      if (res) {
+        resolverActor.DefaultInfo && dispatch(recordsActions.setRecords(resolverActor.DefaultInfo))   
+      }
+    }).finally(()=>{
+      dispatch(recordsActions.setDomainStatus(domainStatus.loaded))
     })
   }, [domainName])
 }
