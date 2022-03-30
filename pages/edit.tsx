@@ -619,7 +619,7 @@ export const Edit: NextPage = () => {
                           target="_blank" rel="noreferrer"
                           href={item.key !== 'email' ?
                             (
-                              (records as any)?.[item.key][0].startsWith('http') ?
+                              (records as any)?.[item.key][0]?.startsWith('http') ?
                                 (records as any)?.[item.key][0] :
                                 '//' + (records as any)?.[item.key][0]
                             )
