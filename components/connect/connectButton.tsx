@@ -42,14 +42,18 @@ export const ConnectButton = () => {
       dispatch(plugActions.setState(FeatureState.Loading));
 
       const isConnected = await requestConnect({
-        whitelist: Object.values(ICNSConstants.canisterIds),
+        whitelist:
+          [
+            ICNSConstants.canisterIds.resolver,
+            ICNSConstants.canisterIds.registry,
+            ICNSConstants.canisterIds.reverse_registrar,
+            ICNSConstants.canisterIds.registrar,
+            ICNSConstants.canisterIds.favorite
+          ],
+        // Object.values(ICNSConstants.canisterIds),
         host: ICNSConstants.host,
       });
-      // [
-      //   ICNSConstants.canisterIds.resolver,
-      //   ICNSConstants.canisterIds.registry,
-      //   ICNSConstants.canisterIds.reverse_registrar
-      // ]
+
       if (isConnected) {
         handleConnect(isConnected);
       }
@@ -66,13 +70,13 @@ export const ConnectButton = () => {
         colorScheme='regular'
         width={reverseName ? '160px' : '130px'}
         as={Button}
-        // rightIcon={<GoTriangleDown />}
-        >
+      // rightIcon={<GoTriangleDown />}
+      >
         {reverseName ? (reverseName.length > 14 ?
           shortPrincipal(addIcpSuffix(reverseName! as string), 4, 8) : addIcpSuffix(reverseName! as string)) : shortPrincipal(principalId)}
       </MenuButton>
-      <MenuList 
-        minWidth={reverseName ? '160px' : '130px'} 
+      <MenuList
+        minWidth={reverseName ? '160px' : '130px'}
         borderRadius='20px'>
         <MenuItem onClick={() => {
           onCopy()

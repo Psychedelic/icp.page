@@ -39,12 +39,24 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
     }
   }, [records])
 
+  function validURL(str: string) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+
   useEffect(() => {
     if (url) {
       let tmp;
       try {
-        tmp = new URL(url);
-        setValid(true);
+        if(validURL(url))
+          setValid(true);
+        else 
+          setValid(false);
       } catch (_) {
         setValid(false);
       }
@@ -206,7 +218,7 @@ const SocialLinksField = ({ title, value }:
     if (resolverController) {
       setLoading(true)
       resolverController.setText(domainName + '.icp', title, newValue).then(() => {
-        dispatch(recordsActions.setRecords({ [title]: newValue }))
+        dispatch(recordsActions.setRecords({ [title]: [newValue] }))
         toast({
           title: 'Success!',
           status: 'success',
