@@ -37,7 +37,7 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
       setTitle(records?.textExtensions?.[index]?.[0] ?? '')
       setUrl(records?.textExtensions?.[index]?.[1] ?? '')
     }
-  }, [records])
+  }, [records, asNew, index])
 
   function validURL(str: string) {
     var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol

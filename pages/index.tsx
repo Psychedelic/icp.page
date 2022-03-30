@@ -14,7 +14,7 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
       flexDirection: 'column',
       alignItems: 'center'
     }} target="_blank" rel="noreferrer"
-    href={link.startsWith('http') ? link : '//' + link}>
+    href={link?.startsWith('http') ? link : '//' + link}>
       <Center width='90%'
         height='calc(20px + 3vh)'
         fontSize='16px'
