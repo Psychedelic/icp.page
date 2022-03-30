@@ -616,7 +616,7 @@ export const Edit: NextPage = () => {
                       socialKeys.map((item, index) =>
                         <a key={index}
                           hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
-                          target="_blank"
+                          target="_blank" rel="noreferrer"
                           href={item.key !== 'email' ?
                             (
                               (records as any)?.[item.key][0].startsWith('http') ?

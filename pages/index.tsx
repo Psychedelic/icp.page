@@ -13,7 +13,8 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
-    }} target="_blank" href={link.startsWith('http') ? link : '//' + link}>
+    }} target="_blank" rel="noreferrer"
+    href={link.startsWith('http') ? link : '//' + link}>
       <Center width='90%'
         height='calc(20px + 3vh)'
         fontSize='16px'
@@ -103,7 +104,7 @@ const Home: NextPage = () => {
         <Text fontSize='14px'
           fontWeight='semibold'>
           {records?.description?.[0] ?? <Skeleton isLoaded={!loading}>
-            'Description not set'
+            Description not set
           </Skeleton>}
         </Text>
       </Flex>
