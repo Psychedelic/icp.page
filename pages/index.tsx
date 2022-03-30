@@ -7,18 +7,26 @@ import { useEffect, useMemo, useState } from 'react'
 
 const LinkBar = ({ title, link, }: { title: string, link: string }) => {
   return (
-    <Center width='90%'
-      height='calc(20px + 3vh)'
-      fontSize='16px'
-      fontWeight='bold'
-      marginBottom='24px'
-      boxShadow='0 0 10px rgba(0, 0, 0, 0.1)'
-      borderRadius='36px'
-      _hover={{
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)'
-      }}>
-      <a href={link}>{title}</a>
-    </Center>
+    <a style={{
+      width: '100%',
+      height: 'fit-content',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }} href={'//' + link}>
+      <Center width='90%'
+        height='calc(20px + 3vh)'
+        fontSize='16px'
+        fontWeight='bold'
+        marginBottom='24px'
+        boxShadow='0 0 10px rgba(0, 0, 0, 0.1)'
+        borderRadius='36px'
+        _hover={{
+          boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)'
+        }}>
+        {title}
+      </Center>
+    </a>
   )
 }
 
@@ -56,7 +64,7 @@ const Home: NextPage = () => {
     }
   }, [records, loading])
 
-  useEffect(()=>{
+  useEffect(() => {
     if (status === domainStatus.loaded) {
       setLoading(false)
     } else {
