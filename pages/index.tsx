@@ -14,7 +14,7 @@ const LinkBar = ({ title, link, }: { title: string, link: string }) => {
       flexDirection: 'column',
       alignItems: 'center'
     }} target="_blank" rel="noreferrer"
-    href={link?.startsWith('http') ? link : '//' + link}>
+      href={link?.startsWith('http') ? link : '//' + link}>
       <Center width='90%'
         height='calc(20px + 3vh)'
         fontSize='16px'
@@ -116,6 +116,7 @@ const Home: NextPage = () => {
           socialKeys.map((item, index) =>
             <a key={index}
               hidden={!(records as any)?.[item.key] || (records as any)?.[item.key].length < 1}
+              target="_blank" rel="noreferrer"
               href={item.key !== 'email' ?
                 (records as any)?.[item.key][0]
                 :

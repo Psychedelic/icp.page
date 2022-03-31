@@ -2,8 +2,7 @@ import { Router, useRouter } from "next/router"
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { usePlugInit } from '@/integrations/plug';
-import { Box, Button, Drawer, DrawerBody, Spinner, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, Img, Menu, MenuButton, MenuItem, MenuList, useDisclosure, useToast } from "@chakra-ui/react";
-import { ExternalLinkIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, useDisclosure, useToast } from "@chakra-ui/react";
 import { ConnectButton } from "../connect";
 import { useRecordsInit } from "@/integrations/records";
 import { usePlugStore, useRecordsStore } from "@/store";
