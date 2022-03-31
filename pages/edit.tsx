@@ -592,7 +592,7 @@ export const Edit: NextPage = () => {
                     fontWeight='bold'>
                     Customized Links
                   </Text>
-                  <Grid gridTemplateColumns='236px 320px'
+                  <Grid gridTemplateColumns='230px 370px'
                     borderRadius='12px'
                     gridColumnGap='16px'>
                     <Text fontSize='16px' fontWeight='semibold'>Title</Text>
@@ -620,7 +620,8 @@ export const Edit: NextPage = () => {
                           href={item.key !== 'email' ?
                             (
                               (records as any)?.[item.key][0]?.startsWith('http') ?
-                                (records as any)?.[item.key][0] :
+                                (records as any)?.[item.key][0]
+                                :
                                 '//' + (records as any)?.[item.key][0]
                             )
                             :
