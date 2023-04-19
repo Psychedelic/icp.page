@@ -1,9 +1,9 @@
 import { RootState } from "@/store/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DefaultInfoExt } from "icns-js";
+import { DefaultInfoExt } from "@rocklabs-io/icns-js";
 
 // use defualt ext interface
-const initialState: {domainName: string, records: DefaultInfoExt} = {
+const initialState: {domainName: string, records: DefaultInfoExt, verifiedETHAddr: string} = {
   domainName: '',
   records: {
     'btc': [],
@@ -23,7 +23,8 @@ const initialState: {domainName: string, records: DefaultInfoExt} = {
     'telegram': [],
     'github': [],
     'avatar': [],
-  }
+  }, 
+  verifiedETHAddr: "" // no 0x
 }
 
 export const recordsSlice = createSlice({
@@ -35,7 +36,10 @@ export const recordsSlice = createSlice({
     },
     setDomainName: (state, action: PayloadAction<string>)=>{
       state.domainName = action.payload
-    }
+    },
+    setVerifiedETHAddr: (state, action: PayloadAction<string>)=>{
+      state.verifiedETHAddr = action.payload
+    },
   }
 })
 

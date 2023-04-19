@@ -8,7 +8,7 @@ import {
 
 
 import { checkIsConnected, getPrincipal } from '.';
-import { ICNSReverseController } from 'icns-js';
+import { ICNSReverseController } from '@rocklabs-io/icns-js';
 
 export const usePlugInit = () => {
   const { isConnected } = usePlugStore();

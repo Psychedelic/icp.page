@@ -5,7 +5,7 @@ import { useAppDispatch, usePlugStore, plugActions, FeatureState } from "@/store
 import { disconnect, requestConnect, usePlugInit } from '@/integrations/plug';
 import { Button, Flex, Menu, MenuButton, MenuItem, MenuList, Switch, Tooltip, useClipboard, useToast } from "@chakra-ui/react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
-import { ICNSConstants } from "icns-js";
+import { ICNSConstants } from "@rocklabs-io/icns-js";
 
 export const ConnectButton = () => {
 
@@ -69,8 +69,10 @@ export const ConnectButton = () => {
       </MenuButton>
       <MenuList 
         minWidth={reverseName ? '160px' : '130px'} 
-        borderRadius='20px'>
-        <MenuItem onClick={() => {
+        borderRadius='20px'
+        padding="4px">
+        <MenuItem borderRadius='16px'
+          onClick={() => {
           onCopy()
           toast({
             status: 'success',
@@ -78,7 +80,8 @@ export const ConnectButton = () => {
             duration: 3000,
           })
         }}>Copy Principal ID</MenuItem>
-        <MenuItem onClick={() => {
+        <MenuItem borderRadius='16px'
+          onClick={() => {
           handleDisconnect()
         }
         }>Disconnect</MenuItem>

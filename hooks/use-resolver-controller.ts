@@ -1,6 +1,6 @@
 import { plug } from "@/integrations/plug"
 import { usePlugStore } from "@/store"
-import { ActorAdapter, createResolverActor, ICNSResolverController } from "icns-js"
+import { ActorAdapter, createResolverActor, ICNSResolverController } from "@rocklabs-io/icns-js"
 import { useEffect, useState } from "react"
 
 

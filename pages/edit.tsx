@@ -1,11 +1,13 @@
 import { useResolverController } from "@/hooks"
 import { recordsActions, useAppDispatch, usePlugStore, useRecordsStore } from "@/store"
 import { socialKeys } from "@/utils"
-import { Flex, Image, Text, Box, Input, Textarea, Tabs, Tab, TabPanels, TabPanel, TabList, Grid, Button, useOutsideClick, Skeleton, useToast, Icon } from "@chakra-ui/react"
+import { Flex, Image, Text, Box, Input, Textarea, Tabs, Tab, TabPanels, TabPanel, TabList, Grid, Button, useOutsideClick, Skeleton, useToast, Icon, Center } from "@chakra-ui/react"
 import { NextPage } from "next"
 import { IoTrashSharp } from 'react-icons/io5'
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
+import { ETHVerifyBar } from "@/components"
+import { MdOutlineArrowOutward } from "react-icons/md"
 
 const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew?: boolean }) => {
 
@@ -14,7 +16,7 @@ const CustomLinksField = ({ index = -1, asNew = false }: { index?: number, asNew
 
   const dispatch = useAppDispatch()
   const resolverController = useResolverController()
-  const { domainName, records } = useRecordsStore()
+  const { domainName, records, verifiedETHAddr } = useRecordsStore()
 
   const [editing, setEditing] = useState(false)
   useOutsideClick({
@@ -260,7 +262,7 @@ const SocialLinksField = ({ title, value }:
 
 export const Edit: NextPage = () => {
 
-  const { domainName, records } = useRecordsStore()
+  const { domainName, records, verifiedETHAddr } = useRecordsStore()
   const { reverseName } = usePlugStore()
   const [avatarLink, setAvatarLink] = useState(records?.avatar?.[0] ?? '')
   const [description, setDescription] = useState(records?.description?.[0] ?? '')
@@ -403,7 +405,7 @@ export const Edit: NextPage = () => {
           minHeight='90vh'
           margin='0 auto'>
           <Tabs alignItems='center' variant='soft-rounded' width='100%'>
-            <TabList width='173px'
+            <TabList width='252px'
               padding='4px'
               rounded='20px'
               backgroundColor='#ECF1FF'
@@ -411,6 +413,7 @@ export const Edit: NextPage = () => {
               margin='0 auto'>
               <Tab width='100%' _focus={{ border: 'none' }} _selected={{ color: 'black', bg: 'white' }}>Profile</Tab>
               <Tab width='100%' _focus={{ border: 'none' }} _selected={{ color: 'black', bg: 'white' }}>Links</Tab>
+              <Tab width='100%' _focus={{ border: 'none' }} _selected={{ color: 'black', bg: 'white' }}>NFT</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -593,6 +596,49 @@ export const Edit: NextPage = () => {
                     )
                   }
                 </Flex>
+              </TabPanel>
+              <TabPanel>
+                <Center width="396px"
+                  height="240px"
+                  gap="20px"
+                  margin="auto auto"
+                  flexDir="column"
+                  borderRadius="20px"
+                  border="1px solid #E6E6E6">
+                  {verifiedETHAddr ?
+                    <Text fontSize={48} lineHeight="48px">&#x1FAAA;</Text> :
+                    <Text fontSize={48} lineHeight="48px">&#128585;</Text>
+                  }
+                  <ETHVerifyBar bgColor="white"
+                    filter={verifiedETHAddr ? "drop-shadow(0px 0px 16px rgb(51, 102, 255, 0.24))" : "none"}
+                    address={verifiedETHAddr} />
+                  {verifiedETHAddr ?
+                    <Text fontWeight='bold'
+                      color='black'>
+                      You have verified your Wallet!
+                    </Text> :
+                    <Text fontWeight='bold'
+                      color='black'>
+                      You have not verified your Wallet.
+                    </Text>}
+                </Center>
+                <a href={"https://icns.id/domains/" + domainName + "/detail"}
+                  target="_blank" rel="noopener noreferrer">
+                  <Flex width='fit-content'
+                    alignItems='center'
+                    padding='10px 20px 10px 20px'
+                    borderRadius='20px'
+                    gap='4px'
+                    margin="20px auto"
+                    color="#5E5C5C"
+                    border='1px solid #E6E6E6'>
+                    <Text fontWeight="semibold">
+                      Manage verification
+                    </Text>
+                    <Icon boxSize="20px"
+                      as={MdOutlineArrowOutward} />
+                  </Flex>
+                </a>
               </TabPanel>
             </TabPanels>
           </Tabs>
